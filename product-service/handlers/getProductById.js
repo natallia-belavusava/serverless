@@ -8,7 +8,7 @@ const getProductMock = (id) => {
       return product.id === id;
     });
     if (!product?.length) {
-      reject(new Error("Product not found"))
+      reject(new Error("Product not found"));
     }
     resolve(product);
   });
@@ -25,7 +25,6 @@ const getProductById = async (id) => {
       body: JSON.stringify(mockProduct),
     };
   } catch (error) {
-    console.log(error)
     return {
       statusCode: 404,
       headers: {

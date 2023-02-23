@@ -9,7 +9,7 @@ components:
     GetProductsResponse:
       type: array
       items:
-        $ref: '#/components/schemas/product'
+        $ref: "#/components/schemas/product"
     product:
       type: object
       properties:
@@ -39,12 +39,12 @@ paths:
       description: list of all products in the store
       operationId: getProductsList
       responses:
-        '200':
+        "200":
           description: Success response
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/GetProductsResponse'
+                $ref: "#/components/schemas/GetProductsResponse"
   /product/{productId}:
     get:
       summary: Get product by ID
@@ -58,15 +58,15 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/product'
-        '404':
+                $ref: "#/components/schemas/product"
+        "404":
           description: Product not found
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/productNotFound'
+                $ref: "#/components/schemas/productNotFound"

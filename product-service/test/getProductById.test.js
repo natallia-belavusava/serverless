@@ -43,7 +43,10 @@ describe("getProductById", () => {
     expect(response).toStrictEqual(expectedResponse);
   });
   it("should return error message and 404 status code if the product is not found", async () => {
-    const response = await getProductById({...event, pathParameters: { id: "error" }});
+    const response = await getProductById({
+      ...event,
+      pathParameters: { id: "error" },
+    });
     const expectedResponse = {
       statusCode: 404,
       headers: {
