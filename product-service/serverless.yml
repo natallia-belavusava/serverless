@@ -1,0 +1,42 @@
+service: product-service
+# app and org for use with dashboard.serverless.com
+#app: your-app-name
+#org: your-org-name
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: development
+  region: eu-west-1
+
+plugins:
+  - serverless-webpack
+
+package:
+  individually: true
+
+custom:
+  webpack:
+    includeModules: false
+    webpackConfig: 'webpack.config.cjs' # Name of webpack configuration file
+
+functions:
+  getProductsList:
+    handler: handler.getProductsList
+    events:
+      - http:
+          path: products
+          method: get
+          cors: true
+
+  getProductById:
+    handler: handler.getProductById
+    events:
+      - http:
+          path: product/{id}
+          method: get
+          cors: true
