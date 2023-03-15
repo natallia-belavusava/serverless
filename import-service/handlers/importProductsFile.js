@@ -1,7 +1,5 @@
 import { PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
-const bucket = process.env.BUCKET;
-const region = process.env.REGION;
 
 const createPresignedUrl = async ({ region, bucket, key }) => {
   const client = new S3Client({ region });
@@ -11,8 +9,8 @@ const createPresignedUrl = async ({ region, bucket, key }) => {
 const importProductsFile = async (fileName) => {
   try {
     const presignedUrl = await createPresignedUrl({
-      region,
-      bucket,
+      region: process.env.REGION,
+      bucket: process.env.BUCKET,
       key: `uploaded/${fileName}`,
     });
 

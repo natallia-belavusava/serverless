@@ -4,14 +4,14 @@ import csv from "csv-parser";
 const importedFileTransformer = async (event) => {
   try {
     const s3 = new S3({ region: process.env.REGION });
-
+    const results = [];
     for (const record of event.Records) {
-      const results = [];
       const Bucket = record.s3.bucket.name;
       const Key = record.s3.object.key;
+      const newKey = record.s3.object.key.replace("uploaded", "parsed");
       await s3.copyObject({
         Bucket,
-        Key: record.s3.object.key.replace("uploaded", "parsed"),
+        Key: newKey,
         CopySource: Bucket + "/" + Key,
       });
 
@@ -20,13 +20,12 @@ const importedFileTransformer = async (event) => {
         Key: Key,
       });
 
-      const newKey = record.s3.object.key;
       const params = { Bucket, Key: newKey };
       const stream = await s3.getObject(params);
       stream.Body.pipe(csv())
         .on("data", (data) => results.push(data))
         .on("end", () => {
-          console.log(results);
+          console.log("results", results);
         });
     }
 
