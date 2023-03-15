@@ -1,0 +1,23 @@
+{
+  "name": "serverless-aws",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "prettier": "prettier ./ --write"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/natallia-belavusava/serverless-aws.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/natallia-belavusava/serverless-aws/issues"
+  },
+  "homepage": "https://github.com/natallia-belavusava/serverless-aws#readme",
+  "dependencies": {
+    "prettier": "2.7.1"
+  }
+}

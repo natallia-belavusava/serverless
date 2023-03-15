@@ -1,0 +1,72 @@
+openapi: 3.0.3
+info:
+  title: Product service
+  version: 1.0.0
+servers:
+  - url: "https://6d1hh9d585.execute-api.eu-west-1.amazonaws.com/development"
+components:
+  schemas:
+    GetProductsResponse:
+      type: array
+      items:
+        $ref: "#/components/schemas/product"
+    product:
+      type: object
+      properties:
+        id:
+          type: string
+          example: 1test
+        title:
+          type: string
+          example: Product title
+        description:
+          type: string
+          example: Description of product
+        price:
+          type: number
+          example: 100
+        count:
+          type: integer
+          example: 5
+    productNotFound:
+      type: string
+      example: "Product not found"
+
+paths:
+  /products:
+    get:
+      summary: List of products
+      description: list of all products in the store
+      operationId: getProductsList
+      responses:
+        "200":
+          description: Success response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GetProductsResponse"
+  /product/{productId}:
+    get:
+      summary: Get product by ID
+      description: Returns a product by
+      operationId: getProductById
+      parameters:
+        - name: productId
+          in: path
+          description: ID of product to return
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/product"
+        "404":
+          description: Product not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/productNotFound"
