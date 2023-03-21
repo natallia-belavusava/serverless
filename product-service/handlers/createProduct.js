@@ -7,9 +7,9 @@ const productsTable = process.env.PRODUCTS_TABLE;
 const stocksTable = process.env.STOCKS_TABLE;
 
 const createProduct = async (event) => {
-  const { title, description, price, count } = JSON.parse(event.body);
+  const { title, description, price, count } = JSON.parse(event);
   console.log(
-    `POST - createProduct with title ${title}, description ${description}, price ${price}, count ${count}`
+    `POST - createProduct with title ${title}, description ${description}, price ${price}, count ${count}; event ${event}`
   );
   try {
     const { error } = productSchema.validate({
@@ -28,7 +28,6 @@ const createProduct = async (event) => {
     }
 
     const id = uuidv4();
-
     await dynamo
       .transactWrite({
         TransactItems: [

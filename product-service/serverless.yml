@@ -6,12 +6,35 @@ provider:
   runtime: nodejs18.x
   stage: development
   region: eu-west-1
-  iam:
-    role: arn:aws:iam::726228754629:role/DynamoDBLambdaAccessRole
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - arn:aws:dynamodb:eu-west-1:726228754629:table/*
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource:
+        - Fn::GetAtt: [SQSQueue, Arn]
+    - Effect: Allow
+      Action: sns:*
+      Resource:
+        Ref: SNSTopic
   environment:
     PRODUCTS_TABLE: products
     STOCKS_TABLE: stocks
     REGION: eu-west-1
+    SQS_URL:
+      Ref: SQSQueue
+    SNS_ARN:
+      Ref: SNSTopic
 
 plugins:
   - serverless-webpack
@@ -49,6 +72,15 @@ functions:
           method: get
           cors: true
 
+  catalogBatchProcess:
+    handler: handler.catalogBatchProcess
+    events:
+      - sqs:
+          batchSize: 5
+          arn:
+            Fn::GetAtt:
+              - SQSQueue
+              - Arn
 resources:
   Resources:
     ProductsTable:
@@ -74,3 +106,31 @@ resources:
             KeyType: HASH
         BillingMode: PAY_PER_REQUEST
         TableName: stocks
+    SQSQueue:
+      Type: AWS::SQS::Queue
+      Properties:
+        QueueName: catalogItemsQueue
+    SNSTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: createProductTopic
+        DisplayName: SNS Topic
+
+    SNSSubscription1:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: bembi.info@gmail.com
+        Protocol: email
+        TopicArn: !Ref SNSTopic
+        FilterPolicyScope: MessageBody
+        FilterPolicy: '{"title": [{"prefix": "test-"}]}'
+
+    SNSSubscription2:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: natallia.belavusava@gmail.com
+        Protocol: email
+        TopicArn: !Ref SNSTopic
+        FilterPolicyScope: MessageBody
+        FilterPolicy: '{"title": [{"anything-but": {"prefix": "test-"}}]}'
+
