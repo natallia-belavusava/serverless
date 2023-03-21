@@ -133,4 +133,3 @@ resources:
         TopicArn: !Ref SNSTopic
         FilterPolicyScope: MessageBody
         FilterPolicy: '{"title": [{"anything-but": {"prefix": "test-"}}]}'
-
