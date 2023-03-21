@@ -9,6 +9,22 @@ provider:
   environment:
     REGION: eu-west-1
     BUCKET: import-service-serverless
+    SQS_URL: https://sqs.eu-west-1.amazonaws.com/726228754629/catalogItemsQueue
+
+  iamRoleStatements:
+    - Effect: "Allow"
+      Action: "s3:ListBucket"
+      Resource:
+        - "arn:aws:s3:::import-service-serverless"
+    - Effect: "Allow"
+      Action: "s3:*"
+      Resource:
+        - "arn:aws:s3:::import-service-serverless/*"
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource:
+        - "arn:aws:sqs:eu-west-1:726228754629:catalogItemsQueue"
 
 plugins:
   - serverless-webpack
@@ -20,16 +36,6 @@ custom:
   webpack:
     includeModules: false
     webpackConfig: "webpack.config.cjs" # Name of webpack configuration file
-
-iamRoleStatements:
-  - Effect: "Allow"
-    Action: "s3:ListBucket"
-    Resource:
-      - "arn:aws:s3:::import-service-serverless"
-  - Effect: "Allow"
-    Action: "s3:*"
-    Resource:
-      - "arn:aws:s3:::import-service-serverless/*"
 
 functions:
   importFileParser:

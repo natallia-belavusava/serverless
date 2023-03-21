@@ -1,6 +1,18 @@
 import { S3 } from "@aws-sdk/client-s3";
+import AWS from "aws-sdk";
 import csv from "csv-parser";
 
+const sendToSQS = (data) => {
+  const sqs = new AWS.SQS();
+
+  sqs.sendMessage(
+    {
+      QueueUrl: process.env.SQS_URL,
+      MessageBody: data,
+    },
+    () => console.log("Send message for: " + data)
+  );
+};
 const importedFileTransformer = async (event) => {
   try {
     const s3 = new S3({ region: process.env.REGION });
@@ -22,11 +34,20 @@ const importedFileTransformer = async (event) => {
 
       const params = { Bucket, Key: newKey };
       const stream = await s3.getObject(params);
+
       stream.Body.pipe(csv())
-        .on("data", (data) => results.push(data))
-        .on("end", () => {
-          console.log("results", results);
-        });
+        .on("data", (data) => {
+          const obj = {};
+          for (let key in data) {
+            const values = data[key].split(";");
+            const keys = key.split(";");
+            keys.forEach((k, index) => {
+              obj[k] = values[index];
+            });
+          }
+          sendToSQS(JSON.stringify(obj));
+        })
+
     }
 
     return {
