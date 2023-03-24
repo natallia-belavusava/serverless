@@ -4,18 +4,6 @@
   "description": "",
   "type": "module",
   "main": "handler.js",
-  "scripts": {
-    "prettier": "prettier ./ --write",
-    "test": "jest"
-  },
-  "jest": {
-    "collectCoverage": true
-  },
-  "dependencies": {
-    "@babel/preset-env": "^7.20.2",
-    "jest": "^29.4.3",
-    "prettier": "2.7.1"
-  },
   "devDependencies": {
     "serverless-webpack": "^5.11.0"
   }

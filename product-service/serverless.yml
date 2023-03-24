@@ -3,9 +3,15 @@ frameworkVersion: "3"
 
 provider:
   name: aws
-  runtime: nodejs14.x
+  runtime: nodejs18.x
   stage: development
   region: eu-west-1
+  iam:
+    role: arn:aws:iam::726228754629:role/DynamoDBLambdaAccessRole
+  environment:
+    PRODUCTS_TABLE: products
+    STOCKS_TABLE: stocks
+    REGION: eu-west-1
 
 plugins:
   - serverless-webpack
@@ -19,6 +25,14 @@ custom:
     webpackConfig: "webpack.config.cjs" # Name of webpack configuration file
 
 functions:
+  createProduct:
+    handler: handler.createProduct
+    events:
+      - http:
+          path: products
+          method: post
+          cors: true
+
   getProductsList:
     handler: handler.getProductsList
     events:
@@ -34,3 +48,29 @@ functions:
           path: product/{id}
           method: get
           cors: true
+
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: products
+
+    StocksTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        AttributeDefinitions:
+          - AttributeName: product_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: product_id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+        TableName: stocks
