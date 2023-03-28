@@ -1,0 +1,41 @@
+service: authorization-service
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: nodejs18.x
+  stage: development
+  region: eu-west-1
+  environment:
+    REGION: eu-west-1
+
+#  iamRoleStatements:
+#    - Effect: "Allow"
+#      Action: "s3:ListBucket"
+#      Resource:
+#        - "arn:aws:s3:::import-service-serverless"
+#    - Effect: "Allow"
+#      Action: "s3:*"
+#      Resource:
+#        - "arn:aws:s3:::import-service-serverless/*"
+#    - Effect: Allow
+#      Action:
+#        - sqs:*
+#      Resource:
+#        - "arn:aws:sqs:eu-west-1:726228754629:catalogItemsQueue"
+
+plugins:
+  - serverless-webpack
+  - serverless-dotenv-plugin
+
+package:
+  individually: true
+
+custom:
+  webpack:
+    includeModules: false
+    webpackConfig: "webpack.config.cjs" # Name of webpack configuration file
+
+functions:
+  basicAuthorizer:
+    handler: handler.basicAuthorizer
